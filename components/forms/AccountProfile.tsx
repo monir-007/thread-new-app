@@ -8,8 +8,11 @@ import {UserValidation} from "@/lib/validation/user";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
 import {ChangeEvent, useState} from "react";
+import {isBase64Image} from "@/lib/utils";
+import {useUploadThing} from "@/lib/uploadthing";
+import {usePathname, useRouter} from "next/navigation";
 
 interface Props {
     user: {
@@ -24,21 +27,38 @@ interface Props {
 }
 
 const AccountProfile = ({user, btnTitle}: Props) => {
+    const router = useRouter();
+    const pathname = usePathname();
+    const {startUpload} = useUploadThing("media");
     const [files, setFiles] = useState<File[]>([]);
     const form = useForm({
         resolver: zodResolver(UserValidation),
         defaultValues: {
-            profile_photo: '',
-            name: '',
-            username: '',
-            bio: '',
+            profile_photo: user?.image ? user.image : "",
+            name: user?.name ? user.name : "",
+            username: user?.username ? user.username : "",
+            bio: user?.bio ? user.bio : "",
         }
     });
 
-    function onSubmit(values: z.infer<typeof UserValidation>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
+    const onSubmit = async (values: z.infer<typeof UserValidation>) => {
+        const blob = values.profile_photo;
+        const hasImageChanged = isBase64Image(blob);
+        if (hasImageChanged) {
+            const imgRes = await startUpload(files)
+            if (imgRes && imgRes[0].fileUrl) {
+                values.profile_photo = imgRes[0].fileUrl;
+            }
+        }
+        // await updateUser({
+        //     name: values.name,
+        //     path: pathname,
+        //     username: values.username,
+        //     userId: user.id,
+        //     bio: values.bio,
+        //     image: values.profile_photo,
+        // });
+
     }
 
     const handleImage = (e: ChangeEvent<HTMLInputElement>, fieldChange: (value: string) => void) => {
