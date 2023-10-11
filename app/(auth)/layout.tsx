@@ -1,7 +1,7 @@
 import React from "react";
 import {ClerkProvider} from "@clerk/nextjs";
 import {Inter} from "next/font/google";
-import {Metadata} from "next";
+import type { Metadata } from "next";
 import {dark} from "@clerk/themes";
 
 import '../globals.css';

@@ -32,6 +32,7 @@ const AccountProfile = ({user, btnTitle}: Props) => {
     const pathname = usePathname();
     const {startUpload} = useUploadThing("media");
     const [files, setFiles] = useState<File[]>([]);
+
     const form = useForm({
         resolver: zodResolver(UserValidation),
         defaultValues: {

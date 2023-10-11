@@ -44,10 +44,10 @@ export async function fetchUser(userId: string) {
 
         return await User
             .findOne({id: userId})
-        // .populate({
-        //     path: "communities",
-        //     model: Community,
-        // });
+            .populate({
+                path: "communities",
+                model: Community,
+            });
     } catch (error: any) {
         throw new Error(`Failed to fetch user: ${error.message}`);
     }
@@ -93,8 +93,10 @@ export async function fetchUsers({userId, searchString = "", pageNumber = 1, pag
     pageSize?: number;
     sortBy?: SortOrder;
 }) {
-    connectToDB();
+
     try {
+        await connectToDB();
+
         // Calculate the number of users to skip based on the page number and page size.
         const skipAmount = (pageNumber - 1) * pageSize;
 

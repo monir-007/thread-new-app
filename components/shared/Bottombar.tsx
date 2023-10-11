@@ -7,6 +7,7 @@ import Image from "next/image";
 
 function Bottombar() {
     const pathname = usePathname();
+
     return (
         <section className="bottombar">
             <div className="bottombar_container">

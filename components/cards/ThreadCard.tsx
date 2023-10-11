@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import {formatDateString} from "@/lib/utils";
+import DeleteThread from "@/components/forms/DeleteThread";
 
 interface Props {
     id: string;
@@ -96,8 +97,17 @@ function ThreadCard({id, currentUserId, parentId, content, author, community, cr
                         </div>
                     </div>
                 </div>
-                {/*TODO:Delete thread*/}
+
+                <DeleteThread
+                    threadId={JSON.stringify(id)}
+                    currentUserId={currentUserId}
+                    authorId={author.id}
+                    parentId={parentId}
+                    isComment={isComment}
+                />
             </div>
+
+
             {!isComment && comments.length > 0 && (
                 <div className="ml-1 mt-3 flex items-center gap-2">
                     {comments.slice(0, 2).map((comment, index) => (

@@ -13,7 +13,7 @@ function Searchbar({routeType}: Props) {
     const router = useRouter();
     const [search, setSearch] = useState("");
 
-// query after 0.3s of no input
+    // query after 0.3s of no input
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             if (search) {
