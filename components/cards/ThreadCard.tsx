@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import {formatDateString} from "@/lib/utils";
 
 interface Props {
     id: string;
@@ -85,7 +86,7 @@ function ThreadCard({id, currentUserId, parentId, content, author, community, cr
                                 />
                             </div>
 
-                            {isComment && comments.length>0 && (
+                            {isComment && comments.length > 0 && (
                                 <Link href={`/thread/${id}`}>
                                     <p className='mt-1 text-subtle-medium text-gray-1'>
                                         {comments.length} repl{comments.length > 1 ? "ies" : "y"}
@@ -95,9 +96,44 @@ function ThreadCard({id, currentUserId, parentId, content, author, community, cr
                         </div>
                     </div>
                 </div>
-
+                {/*TODO:Delete thread*/}
             </div>
+            {!isComment && comments.length > 0 && (
+                <div className="ml-1 mt-3 flex items-center gap-2">
+                    {comments.slice(0, 2).map((comment, index) => (
+                        <Image
+                            key={index}
+                            src={comment.author.image}
+                            alt={`user_${index}`}
+                            width={24}
+                            height={24}
+                            className={`${index !== 0 && "-ml-5"} rounded-full object-cover`}
+                        />
+                    ))}
+                    <Link href={`/thread/${id}`}>
+                        <p className="mt-1 text-subtle-medium text-gray-1">
+                            {comments.length} repl{comments.length > 1 ? "ies" : "y"}
+                        </p>
+                    </Link>
+                </div>
+            )}
 
+            {!isComment && community && (
+                <Link href={`/communities/${community.id}`}
+                      className="mt-5 flex items-center">
+                    <p className="text-subtle-medium text-gray-1">
+                        {formatDateString(createdAt)}
+                        {community && ` - ${community.name} Community`}
+                    </p>
+                    <Image
+                        src={community.image}
+                        alt={community.name}
+                        width={14}
+                        height={14}
+                        className='ml-1 rounded-full object-cover'
+                    />
+                </Link>
+            )}
         </article>
     )
 
