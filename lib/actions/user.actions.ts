@@ -130,9 +130,37 @@ export async function fetchUsers({userId, searchString = "", pageNumber = 1, pag
         // Check if there are more users beyond the current page.
         const isNext = totalUsersCount > skipAmount + users.length;
 
-        return { users, isNext };
+        return {users, isNext};
     } catch (error: any) {
         console.error("Error fetching users:", error);
         throw error;
+    }
+}
+
+export async function getActivity(userId: string) {
+    try {
+        await connectToDB();
+        // Find all threads created by the user
+        const userThreads = await Thread.find({author: userId});
+
+        // Collect all the child thread ids (replies) from the 'children' field of each user thread
+        const childThreadIds = userThreads.reduce((acc, userThread) => {
+            return acc.concat(userThread.children)
+        }, []);
+
+        // Find and return the child threads (replies) excluding the ones created by the same user
+        const replies = await Thread.find({
+            _id: {$in: childThreadIds},
+            author: {$ne: userId}, // Exclude threads authored by the same user
+        }).populate({
+            path: "author",
+            model: User,
+            select: "name image _id",
+        });
+
+        return replies;
+    } catch (error: any) {
+        console.error(`Failed to fetch activity:  ${error.message}`);
+        throw new Error(`Failed to fetch activity:  ${error.message}`);
     }
 }

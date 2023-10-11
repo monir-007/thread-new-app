@@ -7,8 +7,8 @@ import ThreadCard from "@/components/cards/ThreadCard";
 async function Home() {
     const user = await currentUser();
     if (!user) return null;
-    // const userInfo = await fetchUser(user.id);
-    // if (!userInfo?.onboared) redirect("/onboarding");
+    const userInfo = await fetchUser(user.id);
+    if (!userInfo?.onboarded) redirect("/onboarding");
 
     const result = await fetchPosts(1, 30);
     console.log('result', result)
